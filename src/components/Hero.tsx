@@ -14,6 +14,7 @@ export const Hero = () => {
             <h1 className="text-7xl">Please Sign In </h1>
         }
       </div>
+      
     </section>
   );
 };

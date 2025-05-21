@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/providers/SessionProvider";
+import { Toaster } from "sonner";
 
 
 const outfit = Outfit({
@@ -30,6 +31,7 @@ export default function RootLayout({
         <body className={`${outfit.variable} font-sans antialiased  bg-neutral-950  text-white`}>
             <Providers>
                 {children}
+                <Toaster richColors position="bottom-right" />
             </Providers>
         
       </body>
