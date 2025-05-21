@@ -1,0 +1,21 @@
+<svg width="320" height="80" viewBox="0 0 320 80" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="StreamSync logo">
+  <!-- Abstract S icon with streaming bars and circular sync lines -->
+  <g transform="translate(20,10)">
+    <!-- Outer circular sync line -->
+    <circle cx="30" cy="30" r="28" stroke="#A3E635" stroke-width="3" stroke-linecap="round" stroke-dasharray="10 20" />
+    <!-- Inner sync line -->
+    <circle cx="30" cy="30" r="18" stroke="#A3E635" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 15" />
+    
+    <!-- Streaming bars forming an S shape -->
+    <rect x="18" y="10" width="4" height="10" fill="#A3E635" rx="1" />
+    <rect x="26" y="16" width="4" height="14" fill="#A3E635" rx="1" />
+    <rect x="34" y="22" width="4" height="10" fill="#A3E635" rx="1" />
+    <rect x="26" y="38" width="4" height="10" fill="#A3E635" rx="1" />
+    <rect x="18" y="44" width="4" height="6" fill="#A3E635" rx="1" />
+  </g>
+
+  <!-- StreamSync text with no space and both S capital -->
+  <text x="90" y="52" fill="white" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-weight="700" font-size="32" letter-spacing="1">
+    <tspan>Stream</tspan><tspan fill="#A3E635">Sync</tspan>
+  </text>
+</svg>

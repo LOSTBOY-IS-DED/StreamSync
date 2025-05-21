@@ -1,36 +1,40 @@
 import type { Metadata } from "next";
-import { Lato , Outfit } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
+import { Providers } from "@/providers/SessionProvider";
 
-
-// const lato = Lato({
-//   subsets: ["latin"],
-// })
 
 const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
-})
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-    title: "StreamSync",
-    description: "Host your own synced streaming party — share YouTube and Spotify, manage the room, chat, and vibe with your crew.",
+  title: "StreamSync",
+  description:
+    "Host your own synced streaming party — share YouTube and Spotify, manage the room, chat, and vibe with your crew.",
 };
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-         <head>
+  return (
+    <html lang="en">
+      <head>
         <link rel="icon" href="/favicon.png" type="image/png" />
       </head>
-            <body
-                className={outfit.className}
-            >
+      
+        <body className={`${outfit.variable} font-sans antialiased  bg-neutral-950  text-white`}>
+            <Providers>
                 {children}
-            </body>
-        </html>
-    );
+            </Providers>
+        
+      </body>
+
+      
+    </html>
+  );
 }

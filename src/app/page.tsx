@@ -1,9 +1,18 @@
+import { Hero } from "@/components/Hero";
+import Navbar from "@/components/Navbar";
 
+console.log(process.env.GOOGLE_CLIENT_ID);
+console.log(process.env.GOOGLE_CLIENT_SECRET);
 
 export default function Home() {
+  
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <h1 className="text-[150px]">hi there</h1>
+    <div className="c">
+      <Navbar />
+      <div className="mt-24">
+        <Hero/>
+      </div>
     </div>
   );
 }
