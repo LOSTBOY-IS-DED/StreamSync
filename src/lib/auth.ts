@@ -15,6 +15,7 @@ export const authOptions = {
         async signIn(params ){
             if(!params.user.email){
                 return false ;
+                
             }
             try {
                 await prismaClient.user.create({
