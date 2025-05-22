@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎧 StreamSync
 
-## Getting Started
+**Stream music or videos together in real-time with your friends—effortlessly.**
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**1. Blazing Fast Streaming**  
+_Experience lightning-fast playback with zero lag. Whether it’s music or video, enjoy smooth streaming that starts instantly, every single time._
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**2. Real-Time Sync**  
+_Stay perfectly in sync with your friends—every play, pause, and skip happens together. It’s like being in the same room, no matter where you are._
 
-## Learn More
+**3. Effortless Scalability**  
+_From a hangout of 2 to a party of 200, the platform scales seamlessly so everyone enjoys the same high-quality experience, no matter the size._
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🔥 7 Additional Feature Highlights
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- 🔐 **Private & Public Rooms** – Create invite-only spaces or open rooms for anyone to join and vibe.
+- 🎵 **YouTube + Spotify Support** – Search, queue, and stream from two of the world’s biggest platforms—together.
+- 🧠 **Smart Queue System** – Add, reorder, or remove content easily; everyone sees updates instantly.
+- 💬 **Live Chat** – Talk, laugh, and react in real-time with built-in group chat.
+- 🎛️ **Host Controls** – Toggle who can join, who can chat, and when the party starts.
+- ✨ **Minimal UI, Maximum Focus** – Clean, distraction-free design that lets the content and connection shine.
+- 📱 **Device-Responsive** – Enjoy synced streaming on desktop, tablet, or mobile with a seamless, adaptive experience.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📦 Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Frontend:** React, TailwindCSS
+- **Backend:** Node.js, WebSockets
+- **Authentication:** NextAuth.js
+- **Database:** PostgreSQL with Prisma
+- **Deployment:** Vercel
+
+---
+
+## 📄 Contribution Guide
+
+Interested in contributing to StreamSync?  
+Check out the guide here → [Contributing to StreamSync](https://zest-knee-b08.notion.site/Contributing-to-StreamSync-1fb17f1447c18039a7f5dbe50db51dae)
+
+---
