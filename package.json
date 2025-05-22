@@ -23,6 +23,7 @@
     "react-dom": "^19.0.0",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
+    "youtube-search-api": "^1.2.2",
     "zod": "^3.25.20"
   },
   "devDependencies": {

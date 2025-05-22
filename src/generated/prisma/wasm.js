@@ -131,6 +131,9 @@ exports.Prisma.StreamScalarFieldEnum = {
   type: 'type',
   url: 'url',
   extractedId: 'extractedId',
+  title: 'title',
+  smallImg: 'smallImg',
+  bigImg: 'bigImg',
   active: 'active',
   userId: 'userId'
 };
