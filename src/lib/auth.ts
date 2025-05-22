@@ -10,6 +10,7 @@ export const authOptions = {
 
     ], 
     callbacks : {
+        //@ts-ignore
         async signIn(params ){
             if(!params.user.email){
                 return false ;
