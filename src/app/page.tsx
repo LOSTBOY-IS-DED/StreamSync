@@ -1,3 +1,4 @@
+import Features3D from "@/components/features-3d";
 import Navbar from "@/components/Navbar";
 import Hero from "@/sections/Hero";
 import Introduction from "@/sections/Introduction";
@@ -8,6 +9,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Introduction />
+      <Features3D />
     </main>
   )
 }
