@@ -1,24 +1,11 @@
-
-
-
 import Navbar from "@/components/Navbar";
-
-
-console.log(process.env.GOOGLE_CLIENT_ID);
-console.log(process.env.GOOGLE_CLIENT_SECRET);
+import Hero from "@/sections/Hero";
 
 export default function Home() {
-  
-
   return (
-    <div className="">
+    <main className="min-h-screen bg-black text-white pt-20">
       <Navbar />
-      <div className="mt-24">
-        {/* <Hero/> */}
-        {/* <Button variant="primary" onClick={() => {
-          toast("Hello sir !!")
-        }}>Hello</Button> */}
-      </div>
-    </div>
-  );
+      <Hero />
+    </main>
+  )
 }

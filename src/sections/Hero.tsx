@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Plus, Music, Video, MessageCircle, Zap, Users, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import StaggeredText from "./ui/StaggeredText"
+import StaggeredText from "@/components/ui/StaggeredText"
 
 export default function HeroDynamic() {
   const [showParticles, setShowParticles] = useState(false)

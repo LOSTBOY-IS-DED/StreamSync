@@ -1,206 +1,253 @@
-"use client";
-import Image from "next/image";
-import logoImage from "@/assets/images/logo.svg";
+// "use client"
 
-import { useState } from "react";
-import { twMerge } from "tailwind-merge";
-import { AnimatePresence, motion } from "framer-motion";
-import Button from "./Button";
-import { getSession, signIn, signOut, useSession } from "next-auth/react";
-import { toast } from "sonner";
+// import { useState } from "react"
+// import Link from "next/link"
+// import { Button } from "@/components/ui/button"
+// import { Video, Music, LogIn } from "lucide-react"
 
-const navLinks = [
-  { label: "Home", href: "#" },
-  { label: "Dashboard", href: "#dashboard" },
-];
+// export default function Navbar() {
+//   const [isOpen, setIsOpen] = useState(false)
+
+//   return (
+//     <header className="fixed top-0 left-0 right-0 z-50">
+//       <div className="max-w-screen-lg mx-auto px-4">
+//         <div className="bg-black/70 backdrop-blur-md rounded-full mt-4 border border-white/10">
+//           <div className="flex items-center justify-between p-2 px-4">
+//             <Link href="/" className="flex items-center">
+//               <svg
+//                 width="160"
+//                 height="40"
+//                 viewBox="0 0 320 80"
+//                 fill="none"
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 role="img"
+//                 aria-label="StreamSync logo"
+//               >
+//                 {/* Abstract S icon with streaming bars and circular sync lines */}
+//                 <g transform="translate(20,10)">
+//                   {/* Outer circular sync line */}
+//                   <circle
+//                     cx="30"
+//                     cy="30"
+//                     r="28"
+//                     stroke="url(#gradient1)"
+//                     strokeWidth="3"
+//                     strokeLinecap="round"
+//                     strokeDasharray="10 20"
+//                   />
+//                   {/* Inner sync line */}
+//                   <circle
+//                     cx="30"
+//                     cy="30"
+//                     r="18"
+//                     stroke="url(#gradient1)"
+//                     strokeWidth="2"
+//                     strokeLinecap="round"
+//                     strokeDasharray="5 15"
+//                   />
+
+//                   {/* Streaming bars forming an S shape */}
+//                   <rect x="18" y="10" width="4" height="10" fill="url(#gradient2)" rx="1" />
+//                   <rect x="26" y="16" width="4" height="14" fill="url(#gradient2)" rx="1" />
+//                   <rect x="34" y="22" width="4" height="10" fill="url(#gradient2)" rx="1" />
+//                   <rect x="26" y="38" width="4" height="10" fill="url(#gradient2)" rx="1" />
+//                   <rect x="18" y="44" width="4" height="6" fill="url(#gradient2)" rx="1" />
+//                 </g>
+
+//                 {/* StreamSync text with no space and both S capital */}
+//                 <text
+//                   x="90"
+//                   y="52"
+//                   fill="white"
+//                   fontFamily="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+//                   fontWeight="700"
+//                   fontSize="32"
+//                   letterSpacing="1"
+//                 >
+//                   <tspan>Stream</tspan>
+//                   <tspan fill="url(#gradient2)">Sync</tspan>
+//                 </text>
+
+//                 {/* Define gradients */}
+//                 <defs>
+//                   <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+//                     <stop offset="0%" stopColor="#8B5CF6" />
+//                     <stop offset="100%" stopColor="#EC4899" />
+//                   </linearGradient>
+//                   <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+//                     <stop offset="0%" stopColor="#8B5CF6" />
+//                     <stop offset="100%" stopColor="#EC4899" />
+//                   </linearGradient>
+//                 </defs>
+//               </svg>
+//             </Link>
+
+//             <div className="flex items-center gap-4">
+//               <Link href="/rooms" className="flex items-center gap-1 text-white/90 hover:text-white">
+//                 <Video className="w-4 h-4" />
+//                 <span>Rooms</span>
+//               </Link>
+
+//               <Link href="/music" className="flex items-center gap-1 text-white/90 hover:text-white">
+//                 <Music className="w-4 h-4" />
+//                 <span>Music</span>
+//               </Link>
+
+//               <div className="h-6 w-px bg-white/20 mx-1"></div>
+
+//               <Button
+//                 variant="default"
+//                 size="sm"
+//                 className="rounded-full border-white/20 bg-transparent hover:bg-white/10"
+//               >
+//                 <LogIn className="w-4 h-4 mr-1" />
+//                 Sign In
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </header>
+//   )
+// }
+
+
+"use client"
+
+import { useState } from "react"
+import Link from "next/link"
+import { signIn, signOut, useSession } from "next-auth/react"
+import { Button } from "@/components/ui/button"
+import { Video, Music, LogIn, LogOut } from "lucide-react"
+import Image from "next/image"
 
 export default function Navbar() {
-  const session = useSession();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
 
   return (
-    <>
-      <section className="py-4 lg:py-8 fixed w-full top-0 z-50">
-        <div className="container max-w-5xl mx-auto">
-          <div className="border border-white/15 rounded-[27px] md:rounded-full bg-neutral-950/70 backdrop:blur">
-            <div className="grid grid-cols-2 lg:grid-cols-3 p-2 px-4 md:pr-2 items-center">
-              <div>
-                <Image
-                  src={logoImage}
-                  alt="layers logo"
-                  className="h-9 w-auto md:h-auto"
-                />
-              </div>
+    <header className="fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-screen-lg mx-auto px-4">
+        <div className="bg-black/70 backdrop-blur-md rounded-full mt-4 border border-white/10">
+          <div className="flex items-center justify-between p-2 px-4">
+            <Link href="/" className="flex items-center">
+              <svg
+                width="160"
+                height="40"
+                viewBox="0 0 320 80"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                role="img"
+                aria-label="StreamSync logo"
+              >
+                {/* Abstract S icon with streaming bars and circular sync lines */}
+                <g transform="translate(20,10)">
+                  {/* Outer circular sync line */}
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r="28"
+                    stroke="url(#gradient1)"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeDasharray="10 20"
+                  />
+                  {/* Inner sync line */}
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r="18"
+                    stroke="url(#gradient1)"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeDasharray="5 15"
+                  />
 
-              <div className="lg:flex justify-center items-center hidden">
-                <nav className="flex gap-6 font-medium ">
-                  {navLinks.map((link) => (
-                    <a href={link.href} key={link.label}>
-                      {link.label}
-                    </a>
-                  ))}
-                </nav>
-              </div>
+                  {/* Streaming bars forming an S shape */}
+                  <rect x="18" y="10" width="4" height="10" fill="url(#gradient2)" rx="1" />
+                  <rect x="26" y="16" width="4" height="14" fill="url(#gradient2)" rx="1" />
+                  <rect x="34" y="22" width="4" height="10" fill="url(#gradient2)" rx="1" />
+                  <rect x="26" y="38" width="4" height="10" fill="url(#gradient2)" rx="1" />
+                  <rect x="18" y="44" width="4" height="6" fill="url(#gradient2)" rx="1" />
+                </g>
 
-              <div className="flex justify-end gap-4 items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="feather feather-menu md:hidden cursor-pointer"
-                  onClick={() => {
-                    setIsOpen(!isOpen);
-                  }}
+                {/* StreamSync text with no space and both S capital */}
+                <text
+                  x="90"
+                  y="52"
+                  fill="white"
+                  fontFamily="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                  fontWeight="700"
+                  fontSize="32"
+                  letterSpacing="1"
                 >
-                  <line
-                    x1="3"
-                    y1="6"
-                    x2="21"
-                    y2="6"
-                    className={twMerge(
-                      "origin-left transition",
-                      isOpen && "rotate-45 -translate-y-1"
-                    )}
-                  ></line>
-                  <line
-                    x1="3"
-                    y1="12"
-                    x2="21"
-                    y2="12"
-                    className={twMerge("transition", isOpen && "opacity-0")}
-                  ></line>
-                  <line
-                    x1="3"
-                    y1="18"
-                    x2="21"
-                    y2="18"
-                    className={twMerge(
-                      "origin-left transition",
-                      isOpen && "-rotate-45 translate-y-1"
-                    )}
-                  ></line>
-                </svg>
+                  <tspan>Stream</tspan>
+                  <tspan fill="url(#gradient2)">Sync</tspan>
+                </text>
 
-                {session.data?.user ? (
-                  <>
-                    {session.data.user.image && (
-                      <Image
-                        src={session.data.user.image}
-                        alt="User Avatar"
-                        width={36}
-                        height={36}
-                        className="rounded-full border border-white object-cover"
-                      />
-                    )}
-                    {/* <Button variant="primary" onClick={() => signOut()}>
-                      Sign Out
-                    </Button> */}
-                    <Button
-                      variant="primary"
-                      onClick={async () => {
-                        await signOut({ redirect: false });
-                        const updatedSession = await getSession();
-                        if (!updatedSession?.user) {
-                          toast.success("User logged out successfully ✅");
-                        } else {
-                          toast.error("Failed to log out. Please try again.");
-                        }
-                      }}
-                    >
-                      Sign Out
-                    </Button>
-                  </>
-                ) : (
-                  //   <Button variant="primary" onClick={() => signIn()}>
-                  //     Sign In
-                  //   </Button>
+                {/* Define gradients */}
+                <defs>
+                  <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="100%" stopColor="#EC4899" />
+                  </linearGradient>
+                  <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#8B5CF6" />
+                    <stop offset="100%" stopColor="#EC4899" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </Link>
+
+            <div className="flex items-center gap-4">
+              <Link href="/rooms" className="flex items-center gap-1 text-white/90 hover:text-white">
+                <Video className="w-4 h-4" />
+                <span>Rooms</span>
+              </Link>
+
+              <Link href="/music" className="flex items-center gap-1 text-white/90 hover:text-white">
+                <Music className="w-4 h-4" />
+                <span>Music</span>
+              </Link>
+
+              <div className="h-6 w-px bg-white/20 mx-1"></div>
+
+              {session?.user ? (
+                <div className="flex items-center gap-2">
+                  {session.user.image && (
+                    <Image
+                      src={session.user.image || "/placeholder.svg"}
+                      alt="User Avatar"
+                      width={32}
+                      height={32}
+                      className="rounded-full border border-white/20 object-cover"
+                    />
+                  )}
                   <Button
-                    variant="primary"
-                    onClick={async () => {
-                      const result = await signIn("google", {
-                        redirect: false,
-                      });
-                      console.log("signIn result:", result);
-                      if (!result?.ok) {
-                        toast.success("Sign in successfully ✅");
-                      } else {
-                        toast.success("Signed in ");
-                      }
-                    }}
+                    variant="outline"
+                    size="sm"
+                    className="rounded-full border-white/20 bg-transparent hover:bg-white/10"
+                    onClick={() => signOut()}
                   >
-                    Sign In
+                    <LogOut className="w-4 h-4 mr-1" />
+                    Sign Out
                   </Button>
-                )}
-              </div>
-            </div>
-
-            <AnimatePresence>
-              {isOpen && (
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: "auto" }}
-                  exit={{ height: 0 }}
-                  className="overflow-hidden"
+                </div>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-full border-white/20 bg-transparent hover:bg-white/10"
+                  onClick={() => signIn("google")}
                 >
-                  <div className="flex flex-col items-center gap-4 py-4 ">
-                    {navLinks.map((link) => (
-                      <a className="" href={link.href} key={link.label}>
-                        {link.label}
-                      </a>
-                    ))}
-                    {session.data?.user ? (
-                      //   <Button variant="primary" onClick={() => signOut()}>
-                      //     Sign Out
-                      //   </Button>
-                      <Button
-                        variant="primary"
-                        onClick={async () => {
-                          await signOut({ redirect: false });
-                          const updatedSession = await getSession();
-                          if (!updatedSession?.user) {
-                            toast.success("User logged out successfully ✅");
-                          } else {
-                            toast.error("Failed to log out. Please try again.");
-                          }
-                        }}
-                      >
-                        Sign Out
-                      </Button>
-                    ) : (
-                      //   <Button variant="primary" onClick={() => signIn()}>
-                      //       Sign In
-                      //   </Button>
-                      <Button
-                        variant="primary"
-                        onClick={async () => {
-                          const result = await signIn("google", {
-                            redirect: false,
-                          });
-                          console.log("signIn result:", result);
-                          if (!result?.ok) {
-                            toast.success("Sign in successfully ✅");
-                          } else {
-                            toast.success("Signed in ");
-                          }
-                        }}
-                      >
-                        Sign In
-                      </Button>
-                    )}
-                  </div>
-                </motion.div>
+                  <LogIn className="w-4 h-4 mr-1" />
+                  Sign In
+                </Button>
               )}
-            </AnimatePresence>
+            </div>
           </div>
         </div>
-      </section>
-      <div className="pb-[86px] md:pb-[98px] lg:pb-[130px]"></div>
-    </>
-  );
+      </div>
+    </header>
+  )
 }
