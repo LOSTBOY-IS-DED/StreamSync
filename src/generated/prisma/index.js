@@ -162,6 +162,10 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin-arm64",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "rhel-openssl-3.0.x"
       }
     ],
     "previewFeatures": [],
@@ -188,8 +192,8 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id       String   @id @default(uuid())\n  email    String   @unique\n  provider Provider\n  streams  Stream[]\n  upvotes  Upvote[]\n}\n\nmodel Stream {\n  id          String     @id @default(uuid())\n  type        StreamType\n  url         String\n  extractedId String\n  title       String     @default(\"\")\n  smallImg    String     @default(\"\")\n  bigImg      String     @default(\"\")\n  active      Boolean    @default(true)\n  upvotes     Upvote[]\n  userId      String\n  user        User       @relation(fields: [userId], references: [id])\n}\n\nmodel Upvote {\n  id       String @id @default(uuid())\n  userId   String\n  streamId String\n  user     User   @relation(fields: [userId], references: [id])\n  stream   Stream @relation(fields: [streamId], references: [id])\n\n  @@unique([userId, streamId])\n}\n\nenum StreamType {\n  Spotify\n  Youtube\n}\n\nenum Provider {\n  Google\n}\n",
-  "inlineSchemaHash": "0fb1ae52e9504f20c29fb5bc7a4a9deaf33e9c1de2058b7d49e28e61ba2b42f6",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider      = \"prisma-client-js\"\n  output        = \"../src/generated/prisma\"\n  binaryTargets = [\"native\", \"rhel-openssl-3.0.x\"]\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel User {\n  id       String   @id @default(uuid())\n  email    String   @unique\n  provider Provider\n  streams  Stream[]\n  upvotes  Upvote[]\n}\n\nmodel Stream {\n  id          String     @id @default(uuid())\n  type        StreamType\n  url         String\n  extractedId String\n  title       String     @default(\"\")\n  smallImg    String     @default(\"\")\n  bigImg      String     @default(\"\")\n  active      Boolean    @default(true)\n  upvotes     Upvote[]\n  userId      String\n  user        User       @relation(fields: [userId], references: [id])\n}\n\nmodel Upvote {\n  id       String @id @default(uuid())\n  userId   String\n  streamId String\n  user     User   @relation(fields: [userId], references: [id])\n  stream   Stream @relation(fields: [streamId], references: [id])\n\n  @@unique([userId, streamId])\n}\n\nenum StreamType {\n  Spotify\n  Youtube\n}\n\nenum Provider {\n  Google\n}\n",
+  "inlineSchemaHash": "f6a1a75c74e6bfffb75b28bc9837a33831c24b97839e8b261f2bc07493afa0d9",
   "copyEngine": true
 }
 
@@ -230,6 +234,10 @@ Object.assign(exports, Prisma)
 // file annotations for bundling tools to include these files
 path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
 path.join(process.cwd(), "src/generated/prisma/libquery_engine-darwin-arm64.dylib.node")
+
+// file annotations for bundling tools to include these files
+path.join(__dirname, "libquery_engine-rhel-openssl-3.0.x.so.node");
+path.join(process.cwd(), "src/generated/prisma/libquery_engine-rhel-openssl-3.0.x.so.node")
 // file annotations for bundling tools to include these files
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), "src/generated/prisma/schema.prisma")
