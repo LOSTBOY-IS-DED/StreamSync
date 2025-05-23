@@ -1,12 +1,3 @@
-"use client"
-
-import type React from "react"
-
-import { motion } from "framer-motion"
-import { Plus, Search } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
 interface VideoPlayerProps {
   currentVideo: {
     id: string
@@ -16,91 +7,55 @@ interface VideoPlayerProps {
     likes: string
     publishedAt: string
   }
-  roomInfo: {
-    id: string
-    name: string
-    host: string
-    activeUsers: number
-    totalSongs: number
-  }
-  youtubeUrl: string
-  setYoutubeUrl: (url: string) => void
-  handleAddYoutubeUrl: () => void
-  searchQuery: string
-  setSearchQuery: (query: string) => void
-  handleSearch: (e: React.FormEvent) => void
 }
 
-export default function VideoPlayer({
-  currentVideo,
-  roomInfo,
-  youtubeUrl,
-  setYoutubeUrl,
-  handleAddYoutubeUrl,
-  searchQuery,
-  setSearchQuery,
-  handleSearch,
-}: VideoPlayerProps) {
+export function VideoPlayer({ currentVideo }: VideoPlayerProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="relative rounded-xl overflow-hidden bg-gradient-to-r from-purple-900/50 to-pink-900/50 backdrop-blur-sm"
-    >
-      <div className="flex flex-col lg:flex-row gap-6 p-6">
-        <div className="lg:w-2/3 rounded-xl overflow-hidden bg-black aspect-video">
-          <iframe
-            width="100%"
-            height="100%"
-            src={`https://www.youtube.com/embed/${currentVideo.id}?autoplay=1&mute=1`}
-            title="YouTube video player"
-            frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          ></iframe>
-        </div>
-        <div className="lg:w-1/3 flex flex-col justify-between">
-          <div>
-            <h2 className="text-xl font-bold">{currentVideo.title}</h2>
-            <div className="flex items-center gap-2 mt-2 text-sm text-white/70">
-              <span>{currentVideo.channel}</span>
-              <span>•</span>
-              <span>{currentVideo.views}</span>
-            </div>
-            <p className="mt-4 text-white/80">
-              Currently playing in {roomInfo.name}. Add songs to the queue or vote for your favorites!
-            </p>
+    <>
+      {/* Video player */}
+      <div className="rounded-lg overflow-hidden bg-black aspect-video">
+        <iframe
+          width="100%"
+          height="100%"
+          src={`https://www.youtube.com/embed/${currentVideo.id}?autoplay=1&mute=1`}
+          title="YouTube video player"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      </div>
+
+      {/* Video info */}
+      <div className="bg-card rounded-lg p-4 shadow-sm">
+        <h2 className="text-lg font-semibold">{currentVideo.title}</h2>
+        <div className="flex items-center justify-between mt-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2">
+            <span>{currentVideo.channel}</span>
+            <span>•</span>
+            <span>{currentVideo.views}</span>
+            <span>•</span>
+            <span>{currentVideo.publishedAt}</span>
           </div>
-          <div className="mt-4 flex flex-col gap-3">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Paste YouTube URL..."
-                value={youtubeUrl}
-                onChange={(e) => setYoutubeUrl(e.target.value)}
-                className="bg-white/10 border-white/20"
-              />
-              <Button
-                onClick={handleAddYoutubeUrl}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-              >
-                <Plus className="h-4 w-4 mr-1" />
-                Add
-              </Button>
-            </div>
-            <form onSubmit={handleSearch} className="flex gap-2">
-              <Input
-                placeholder="Search for videos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="bg-white/10 border-white/20"
-              />
-              <Button type="submit" variant="outline" className="border-white/20">
-                <Search className="h-4 w-4" />
-              </Button>
-            </form>
+          <div className="flex items-center gap-1">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+            >
+              <path d="M7 10v12" />
+              <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
+            </svg>
+            <span>{currentVideo.likes}</span>
           </div>
         </div>
       </div>
-    </motion.div>
+    </>
   )
 }
