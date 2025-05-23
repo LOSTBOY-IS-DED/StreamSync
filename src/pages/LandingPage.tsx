@@ -1,4 +1,6 @@
 "use client";
+export const dynamic = 'force-dynamic';
+
 import Navbar from "@/components/Navbar";
 import Hero from "@/sections/Hero";
 import Introduction from "@/sections/Introduction";
