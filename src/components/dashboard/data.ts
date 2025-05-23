@@ -6,7 +6,7 @@ export const initialQueueItems = [
     thumbnail: "https://i.ytimg.com/vi/5NV6Rdv1a3I/hqdefault.jpg",
     votes: 15,
     duration: "6:07",
-    userVote: null,
+    userVote: null as "up" | "down" | null,
     addedBy: "Alex",
   },
   {
@@ -15,7 +15,7 @@ export const initialQueueItems = [
     thumbnail: "https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg",
     votes: 8,
     duration: "4:22",
-    userVote: "up",
+    userVote: "up" as "up" | "down" | null,
     addedBy: "Jamie",
   },
   {
@@ -24,7 +24,7 @@ export const initialQueueItems = [
     thumbnail: "https://i.ytimg.com/vi/TUVcZfQe-Kw/hqdefault.jpg",
     votes: 5,
     duration: "3:23",
-    userVote: "down",
+    userVote: "down" as "up" | "down" | null,
     addedBy: "Taylor",
   },
   {
@@ -33,7 +33,7 @@ export const initialQueueItems = [
     thumbnail: "https://i.ytimg.com/vi/adLGHcj_fmA/hqdefault.jpg",
     votes: 12,
     duration: "4:02",
-    userVote: null,
+    userVote: null as "up" | "down" | null,
     addedBy: "Jordan",
   },
   {
@@ -42,7 +42,7 @@ export const initialQueueItems = [
     thumbnail: "https://i.ytimg.com/vi/mRD0-GxqHVo/hqdefault.jpg",
     votes: 7,
     duration: "3:58",
-    userVote: null,
+    userVote: null as "up" | "down" | null,
     addedBy: "Casey",
   },
 ]

@@ -14,7 +14,7 @@ import { SidebarContent } from "@/components/dashboard/sidebar-content"
 import { VideoPlayer } from "@/components/dashboard/video-player"
 import { Queue } from "@/components/dashboard/queue"
 import { Chat } from "@/components/dashboard/chat"
-import { AlternativeDesign } from "./alternative-design"
+import { AlternativeDesign } from "@/components/dashboard/alternative-design"
 import { initialQueueItems, initialChatMessages, currentVideo, roomInfo } from "@/components/dashboard/data"
 
 export function Dashboard() {
@@ -39,7 +39,7 @@ export function Dashboard() {
             return {
               ...item,
               votes: voteType === "up" ? item.votes - 1 : item.votes + 1,
-              userVote: null,
+              userVote: null as "up" | "down" | null,
             }
           }
           // If user is changing their vote
@@ -86,7 +86,7 @@ export function Dashboard() {
       thumbnail: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
       votes: 1,
       duration: "3:30",
-      userVote: "up",
+      userVote: "up" as "up" | "down" | null,
       addedBy: "You",
     }
 
