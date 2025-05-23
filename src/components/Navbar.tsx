@@ -92,14 +92,14 @@ export default function Navbar() {
               {/* Desktop Navigation */}
               <div className="hidden md:flex justify-center items-center">
                 <nav className="flex gap-6 font-medium">
-                  <Link href="/rooms" className="flex items-center gap-1 text-white/90 hover:text-white">
+                  <Link href="/" className="flex items-center gap-1 text-white/90 hover:text-white">
                     <Video className="w-4 h-4" />
-                    <span>Rooms</span>
+                    <span>home</span>
                   </Link>
 
-                  <Link href="/music" className="flex items-center gap-1 text-white/90 hover:text-white">
+                  <Link href="/dashboard" className="flex items-center gap-1 text-white/90 hover:text-white">
                     <Music className="w-4 h-4" />
-                    <span>Music</span>
+                    <span>Dashboard</span>
                   </Link>
                 </nav>
               </div>
