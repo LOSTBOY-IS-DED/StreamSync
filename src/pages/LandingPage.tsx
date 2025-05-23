@@ -1,3 +1,4 @@
+"use client";
 import Navbar from "@/components/Navbar";
 import Hero from "@/sections/Hero";
 import Introduction from "@/sections/Introduction";
@@ -8,7 +9,7 @@ import { Redirect } from "@/components/Redirect";
 export default function LandingPage(){
     return(
         <>
-            <main className="min-h-screen bg-black text-white pt-20">
+        <main className="min-h-screen bg-black text-white pt-20">
       <Navbar />
       <Redirect />
       <Hero />
