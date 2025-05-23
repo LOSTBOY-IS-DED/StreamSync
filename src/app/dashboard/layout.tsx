@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { ThemeProvider } from "@/components/theme-provider"
-import { Toaster } from "@/components/sonner-provider"
+import { SonnerProvider } from "@/components/sonner-provider"
 
 export default function DashboardLayout({
   children,
@@ -12,7 +12,7 @@ export default function DashboardLayout({
   return (
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
       {children}
-      <Toaster />
+      <SonnerProvider />
     </ThemeProvider>
   )
 }
