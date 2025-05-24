@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, Menu, X, Users, Moon, Sun, LayoutGrid, LayoutList } from "lucide-react"
@@ -17,8 +17,14 @@ import { Chat } from "@/components/dashboard/chat"
 import { AlternativeDesign } from "@/components/dashboard/alternative-design"
 import { initialQueueItems, initialChatMessages, currentVideo, roomInfo } from "@/components/dashboard/data"
 import { ProfileHover } from "../ui/profile-card"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
 
 export function Dashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  // ✅ All hooks at the top
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [youtubeUrl, setYoutubeUrl] = useState("")
@@ -30,29 +36,33 @@ export function Dashboard() {
   const { toast } = useToast()
   const [designMode, setDesignMode] = useState<"modern" | "alternative">("modern")
 
-  // Handle voting
+  useEffect(() => {
+    if (status === "loading") return
+    if (!session?.user) {
+      router.push("/") // Redirect unauthenticated users to home
+    }
+  }, [session, status, router])
+
+  // ✅ Return after all hooks
+  if (status === "loading" || !session?.user) return null
+
   const handleVote = (id: string, voteType: "up" | "down" | null) => {
     setQueueItems(
       queueItems.map((item) => {
         if (item.id === id) {
-          // If user is removing their vote
           if (item.userVote === voteType) {
             return {
               ...item,
               votes: voteType === "up" ? item.votes - 1 : item.votes + 1,
               userVote: null as "up" | "down" | null,
             }
-          }
-          // If user is changing their vote
-          else if (item.userVote !== null) {
+          } else if (item.userVote !== null) {
             return {
               ...item,
               votes: voteType === "up" ? item.votes + 2 : item.votes - 2,
               userVote: voteType,
             }
-          }
-          // If user is voting for the first time
-          else {
+          } else {
             return {
               ...item,
               votes: voteType === "up" ? item.votes + 1 : item.votes - 1,
@@ -65,11 +75,8 @@ export function Dashboard() {
     )
   }
 
-  // Handle adding a YouTube URL
   const handleAddYoutubeUrl = () => {
     if (!youtubeUrl) return
-
-    // Simple validation for YouTube URL
     if (!youtubeUrl.includes("youtube.com") && !youtubeUrl.includes("youtu.be")) {
       toast({
         title: "Invalid YouTube URL",
@@ -79,8 +86,6 @@ export function Dashboard() {
       return
     }
 
-    // In a real app, you would fetch video details from the YouTube API
-    // For this demo, we'll just add a mock item
     const newItem = {
       id: `new-${Date.now()}`,
       title: "New Added Video",
@@ -100,7 +105,6 @@ export function Dashboard() {
     })
   }
 
-  // Handle search
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchQuery) return
@@ -110,11 +114,9 @@ export function Dashboard() {
       description: `Searching for "${searchQuery}"`,
     })
 
-    // In a real app, you would search the YouTube API
     setSearchQuery("")
   }
 
-  // Handle sending a chat message
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newMessage) return
@@ -131,7 +133,6 @@ export function Dashboard() {
     setNewMessage("")
   }
 
-  // Sort queue items by votes
   const sortedQueueItems = [...queueItems].sort((a, b) => b.votes - a.votes)
 
   const copyRoomId = () => {
@@ -143,7 +144,7 @@ export function Dashboard() {
   }
 
   return (
-    <div className={`min-h-screen flex flex-col`}>
+    <div className="min-h-screen flex flex-col">
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
         <Button
@@ -247,20 +248,17 @@ export function Dashboard() {
               >
                 {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
-              <ProfileHover></ProfileHover>
+              <ProfileHover />
             </div>
           </header>
 
           {/* Content area */}
           {designMode === "modern" ? (
             <div className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-4 p-4 overflow-hidden">
-              {/* Video player and queue */}
               <div className="lg:col-span-2 flex flex-col gap-4 overflow-hidden">
                 <VideoPlayer currentVideo={currentVideo} />
                 <Queue queueItems={sortedQueueItems} handleVote={handleVote} />
               </div>
-
-              {/* Chat */}
               <Chat
                 chatMessages={chatMessages}
                 newMessage={newMessage}
