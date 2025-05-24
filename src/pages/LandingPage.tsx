@@ -4,6 +4,7 @@ import dynamicImport from "next/dynamic";
 import Hero from "@/sections/Hero";
 import Introduction from "@/sections/Introduction";
 import Features3D from "@/components/features-3d";
+import { CustomFooter } from "@/components/custom-footer";
 
 // Marking dynamic imports with ssr: false
 const Navbar = dynamicImport(() => import("@/components/Navbar"), { ssr: false });
@@ -17,6 +18,7 @@ export default function LandingPage() {
       <Hero />
       <Introduction />
       <Features3D />
+      <CustomFooter />
     </main>
   );
 }

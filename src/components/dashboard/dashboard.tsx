@@ -16,6 +16,7 @@ import { Queue } from "@/components/dashboard/queue"
 import { Chat } from "@/components/dashboard/chat"
 import { AlternativeDesign } from "@/components/dashboard/alternative-design"
 import { initialQueueItems, initialChatMessages, currentVideo, roomInfo } from "@/components/dashboard/data"
+import { ProfileHover } from "../ui/profile-card"
 
 export function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -246,10 +247,7 @@ export function Dashboard() {
               >
                 {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
               </Button>
-              <Avatar>
-                <AvatarImage src="/placeholder.svg" alt="User" />
-                <AvatarFallback>SS</AvatarFallback>
-              </Avatar>
+              <ProfileHover></ProfileHover>
             </div>
           </header>
 
