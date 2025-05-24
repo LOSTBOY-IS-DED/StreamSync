@@ -123,25 +123,57 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  provider: 'provider'
+  name: 'name',
+  image: 'image',
+  provider: 'provider',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RoomScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  adminId: 'adminId',
+  allowSongAdd: 'allowSongAdd',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RoomUserScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  roomId: 'roomId',
+  role: 'role'
 };
 
 exports.Prisma.StreamScalarFieldEnum = {
   id: 'id',
   type: 'type',
-  url: 'url',
-  extractedId: 'extractedId',
-  title: 'title',
-  smallImg: 'smallImg',
-  bigImg: 'bigImg',
   active: 'active',
-  userId: 'userId'
+  played: 'played',
+  playedTs: 'playedTs',
+  createdAt: 'createdAt',
+  roomId: 'roomId',
+  extractedId: 'extractedId',
+  url: 'url',
+  bigImg: 'bigImg',
+  smallImg: 'smallImg',
+  title: 'title',
+  addedById: 'addedById'
 };
 
 exports.Prisma.UpvoteScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  streamId: 'streamId'
+  streamId: 'streamId',
+  vote: 'vote'
+};
+
+exports.Prisma.MessageScalarFieldEnum = {
+  id: 'id',
+  text: 'text',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  roomId: 'roomId'
 };
 
 exports.Prisma.SortOrder = {
@@ -153,8 +185,18 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.Provider = exports.$Enums.Provider = {
   Google: 'Google'
+};
+
+exports.Role = exports.$Enums.Role = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
 };
 
 exports.StreamType = exports.$Enums.StreamType = {
@@ -162,10 +204,18 @@ exports.StreamType = exports.$Enums.StreamType = {
   Youtube: 'Youtube'
 };
 
+exports.VoteType = exports.$Enums.VoteType = {
+  Upvote: 'Upvote',
+  Downvote: 'Downvote'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
+  Room: 'Room',
+  RoomUser: 'RoomUser',
   Stream: 'Stream',
-  Upvote: 'Upvote'
+  Upvote: 'Upvote',
+  Message: 'Message'
 };
 
 /**
