@@ -1,5 +1,11 @@
+
+
+
 import GoogleProvider from "next-auth/providers/google";
 import { prismaClient } from "./db";
+
+
+
 
 export const authOptions = {
   providers: [
@@ -37,7 +43,9 @@ export const authOptions = {
 
     //   return true;
     // },
-        async signIn({ account, profile, user }) {
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async signIn({ account, profile, user }: { user: any; account: any | null; profile?: any; email?: { verificationRequest?: boolean }; credentials?: Record<string, unknown>; }): Promise<boolean> {
       if (account.provider === "google") {
         if (profile.email_verified) {
           const existingUser = await prismaClient.user.findUnique({
