@@ -11,7 +11,6 @@ import { cn } from "@/lib/utils";
 import { signOut, useSession } from "next-auth/react";
 
 interface ProfileHoverProps {
-
   className?: string;
 }
 

@@ -314,7 +314,7 @@ export function RoomPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="absolute top-4 sm:top-8 right-4 sm:right-8 z-20"
         >
-          <ProfileHover user={session?.user} onLogout={handleLogout} />
+          <ProfileHover/>
         </motion.div>
 
         <div className="flex items-center justify-center min-h-screen">
