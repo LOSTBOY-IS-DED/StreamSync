@@ -10,32 +10,59 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET || "secret",
   callbacks: {
-    async signIn({ user }) {
-      if (!user.email) {
-        return false;
-      }
+    // async signIn({ user }) {
+    //   if (!user.email) {
+    //     return false;
+    //   }
 
-      try {
-        const existingUser = await prismaClient.user.findUnique({
-          where: { email: user.email },
-        });
+    //   try {
+    //     const existingUser = await prismaClient.user.findUnique({
+    //       where: { email: user.email },
+    //     });
 
-        if (!existingUser) {
-          await prismaClient.user.create({
-            data: {
-              email: user.email,
-              name: user.name ?? "user",
-              image: user.image ?? "",
-              provider: "Google",
-            },
+    //     if (!existingUser) {
+    //       await prismaClient.user.create({
+    //         data: {
+    //           email: user.email,
+    //           name: user.name ?? "user",
+    //           image: user.image ?? "",
+    //           provider: "Google",
+    //         },
+    //       });
+    //     }
+    //   } catch (e) {
+    //     console.error("Error in signIn callback:", e);
+    //     return false;
+    //   }
+
+    //   return true;
+    // },
+        async signIn({ account, profile, user }) {
+      if (account.provider === "google") {
+        if (profile.email_verified) {
+          const existingUser = await prismaClient.user.findUnique({
+            where: { email: profile.email },
           });
+
+          if (!existingUser) {
+            await prismaClient.user.create({
+              data: {
+                email: user.email,
+                name: user.name ?? "user",
+                image: user.image ?? "",
+                provider: "Google",
+                },
+            });
         }
-      } catch (e) {
-        console.error("Error in signIn callback:", e);
-        return false;
+
+          return true;
+        } else {
+          return false;
+        }
       }
 
-      return true;
+
+      return false;
     },
   },
 };
