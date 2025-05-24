@@ -5,6 +5,7 @@ import { Music, Heart, Github, Twitter, Instagram, Mail, ExternalLink, ArrowUp }
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 export function CustomFooter() {
   const scrollToTop = () => {
@@ -154,10 +155,10 @@ export function CustomFooter() {
             {/* Social Media Icons */}
             <div className="flex gap-3 mb-4">
               {[
-                { icon: Github, color: "hover:bg-gray-700" },
-                { icon: Twitter, color: "hover:bg-blue-600" },
-                { icon: Instagram, color: "hover:bg-pink-600" },
-                { icon: Mail, color: "hover:bg-purple-600" },
+                { icon: Github, color: "hover:bg-gray-700" , link : "https://github.com/LOSTBOY-IS-DED" },
+                { icon: Twitter, color: "hover:bg-blue-600", link : "https://x.com/SubhajitChaud18"},
+                { icon: Instagram, color: "hover:bg-pink-600", link : "https://www.instagram.com/subh_192.168.1.1/" },
+                { icon: Mail, color: "hover:bg-purple-600", link : "mailto:subhajitchaudhury05@gmail.com" },
               ].map((social, index) => (
                 <motion.button
                   key={index}
@@ -166,13 +167,16 @@ export function CustomFooter() {
                   whileTap="tap"
                   className={`p-2 bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-all duration-300 ${social.color}`}
                 >
-                  <social.icon className="h-4 w-4" />
+                  <Link href={social.link} >
+                    <social.icon className="h-4 w-4" />
+                  </Link>
+                  
                 </motion.button>
               ))}
             </div>
 
             {/* Newsletter */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <p className="text-sm text-gray-400">Stay updated</p>
               <div className="flex gap-2">
                 <input
@@ -187,7 +191,7 @@ export function CustomFooter() {
                   Subscribe
                 </Button>
               </div>
-            </div>
+            </div> */}
           </motion.div>
         </div>
 
