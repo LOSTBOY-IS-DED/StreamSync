@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-"use client"
+"use client"; 
 
 import type React from "react"
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import axios from "axios"
 import {
   Music,
   Users,
@@ -45,12 +46,27 @@ export function RoomPage() {
 
   const [mode, setMode] = useState<"join" | "create">("join")
   const [roomId, setRoomId] = useState("")
+  const [createRoomId, setCreateRoomId] = useState("")
   const [copied, setCopied] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
 
-  // Pre-generated room ID for create mode
-  const generatedRoomId = "stream-sync-" + Math.random().toString(36).substr(2, 9)
+  const generateRoomId = () => {
+    const characters = "abcdefghijklmnopqrstuvwxyz";
+    let roomId = "";
+    for (let i = 0; i < 9; i++) {
+      if (i > 0 && i % 3 === 0) {
+        roomId += "-";
+      }
+      roomId += characters[Math.floor(Math.random() * characters.length)];
+    }
+    return roomId;
+  };
+
+  const formatRoomId = (input: string) => {
+    const cleanInput = input.replace(/-/g, "").slice(0, 9);
+    return cleanInput.match(/.{1,3}/g)?.join("-") || "";
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -66,8 +82,12 @@ export function RoomPage() {
   }, [])
 
   const handleCopyRoomId = async () => {
+    if (!createRoomId) {
+      toast.error("No room ID to copy")
+      return
+    }
     try {
-      await navigator.clipboard.writeText(generatedRoomId)
+      await navigator.clipboard.writeText(createRoomId)
       setCopied(true)
       toast.success("Room ID copied to clipboard!")
       setTimeout(() => setCopied(false), 2000)
@@ -76,24 +96,54 @@ export function RoomPage() {
     }
   }
 
+  const handleQuickGenerate = () => {
+    const newRoomId = generateRoomId();
+    setRoomId(newRoomId);
+    toast.success("Room ID generated!");
+  }
+
+  const handleGenerateCreateRoomId = () => {
+    const newRoomId = generateRoomId();
+    setCreateRoomId(newRoomId);
+    toast.success("Room ID generated!");
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    setTimeout(() => {
+    try {
       if (mode === "create") {
-        toast.success("Room created successfully!")
-        window.location.href = `/dashboard?room=${generatedRoomId}`
+        if (createRoomId.trim()) {
+          const res = await axios.post("/api/room/create", {
+            roomId: createRoomId,
+          });
+          if (!res) {
+            console.log("Error while creating room");
+            toast.error("Failed to create room");
+            setIsLoading(false);
+            return;
+          }
+          toast.success("Room created successfully!")
+          window.location.href = `/dashboard?room=${createRoomId}`
+        } else {
+          toast.error("Please generate a room ID")
+          setIsLoading(false)
+        }
       } else {
         if (roomId.trim()) {
           toast.success("Joining room...")
           window.location.href = `/dashboard?room=${roomId}`
         } else {
           toast.error("Please enter a room ID")
+          setIsLoading(false)
         }
       }
-      setIsLoading(false)
-    }, 1500)
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Something went wrong");
+      setIsLoading(false);
+    }
   }
 
   const handleLogout = () => {
@@ -377,7 +427,7 @@ export function RoomPage() {
             >
               <Card className="bg-gray-900/80 backdrop-blur-xl border-purple-500/20 shadow-2xl">
                 <CardContent className="p-4 sm:p-6 lg:p-8">
-                  {/* Mode Toggle */}
+                  {/* Mode Toggle - Removed the old quick generate button */}
                   <motion.div
                     variants={leftVariants}
                     initial="hidden"
@@ -386,7 +436,7 @@ export function RoomPage() {
                     className="flex justify-center mb-6 sm:mb-8"
                   >
                     <div className="bg-gray-800/50 p-1 rounded-xl backdrop-blur-sm border border-purple-500/20">
-                      <div className="flex">
+                      <div className="flex items-center">
                         <Button
                           variant={mode === "join" ? "default" : "ghost"}
                           onClick={() => setMode("join")}
@@ -439,9 +489,9 @@ export function RoomPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                           <div>
                             <Input
-                              placeholder="Enter room ID (e.g., stream-sync-abc123)"
+                              placeholder="Enter or generate room ID (e.g., abc-def-ghi)"
                               value={roomId}
-                              onChange={(e) => setRoomId(e.target.value)}
+                              onChange={(e) => setRoomId(formatRoomId(e.target.value))}
                               className="h-12 sm:h-14 text-base sm:text-lg bg-gray-800/50 border-purple-500/30 text-white placeholder:text-white/50 focus:border-purple-400"
                             />
                           </div>
@@ -487,36 +537,53 @@ export function RoomPage() {
                         <div className="bg-gray-800/30 rounded-xl p-4 sm:p-6 border border-purple-500/20">
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-white/70 text-sm sm:text-base">Your Room ID:</span>
-                            <Badge variant="secondary" className="bg-purple-600/20 text-purple-300 text-xs sm:text-sm">
-                              <Sparkles className="w-3 h-3 mr-1" />
-                              Generated
-                            </Badge>
+                            {createRoomId && (
+                              <Badge variant="secondary" className="bg-purple-600/20 text-purple-300 text-xs sm:text-sm">
+                                <Sparkles className="w-3 h-3 mr-1" />
+                                Generated
+                              </Badge>
+                            )}
                           </div>
 
                           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                            <div className="flex-1 bg-gray-800/50 rounded-lg p-3 font-mono text-white text-sm sm:text-base break-all">
-                              {generatedRoomId}
-                            </div>
-                            <Button
-                              onClick={handleCopyRoomId}
-                              variant="outline"
-                              size="icon"
-                              className="h-12 w-full sm:w-12 border-purple-500/30 hover:bg-purple-500/10"
-                            >
-                              {copied ? (
-                                <Check className="w-4 h-4 text-green-400" />
-                              ) : (
-                                <Copy className="w-4 h-4 text-white" />
+                            <div className="flex-1 bg-gray-800/50 rounded-lg p-3 font-mono text-white text-sm sm:text-base break-all min-h-[48px] flex items-center">
+                              {createRoomId || (
+                                <span className="text-white/50 text-sm">
+                                  Click the + button to generate a room ID
+                                </span>
                               )}
-                            </Button>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={handleGenerateCreateRoomId}
+                                variant="outline"
+                                size="icon"
+                                className="h-12 w-12 border-purple-500/30 hover:bg-purple-500/20 hover:border-purple-400 transition-all duration-300 group"
+                              >
+                                <Plus className="w-4 h-4 text-purple-400 group-hover:text-purple-300" />
+                              </Button>
+                              <Button
+                                onClick={handleCopyRoomId}
+                                variant="outline"
+                                size="icon"
+                                disabled={!createRoomId}
+                                className="h-12 w-12 border-purple-500/30 hover:bg-purple-500/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {copied ? (
+                                  <Check className="w-4 h-4 text-green-400" />
+                                ) : (
+                                  <Copy className="w-4 h-4 text-white" />
+                                )}
+                              </Button>
+                            </div>
                           </div>
                         </div>
 
                         <form onSubmit={handleSubmit}>
                           <Button
                             type="submit"
-                            disabled={isLoading}
-                            className="w-full h-12 sm:h-14 text-base sm:text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg"
+                            disabled={isLoading || !createRoomId}
+                            className="w-full h-12 sm:h-14 text-base sm:text-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isLoading ? (
                               <motion.div
