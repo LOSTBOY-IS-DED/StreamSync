@@ -6,6 +6,8 @@ import { MessageSquare, Send } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { useWebSocket } from "@/context/WebContext"
+import Switch from "../Button1"
 
 interface ChatProps {
   chatMessages: {
@@ -18,13 +20,34 @@ interface ChatProps {
   newMessage: string
   setNewMessage: (message: string) => void
   handleSendMessage: (e: React.FormEvent) => void
+  isAdmin?: boolean
 }
 
-export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessage }: ChatProps) {
+export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessage, isAdmin = false }: ChatProps) {
+  // Get WebSocket data with fallback for when provider is not available
+  const webSocketData = useWebSocket()
+  let chatPaused = false
+  let messageControl = () => {
+    console.log("Mock messageControl")
+  }
+
+  if (webSocketData) {
+    chatPaused = webSocketData.chatPaused
+    messageControl = webSocketData.messageControl
+  }
+
   return (
     <div className="bg-card rounded-lg shadow-sm overflow-hidden flex flex-col">
       <div className="p-4 border-b border-border">
-        <h2 className="font-semibold">Live Chat</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold">Live Chat</h2>
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">{chatPaused ? "Toggle Off" : "Toggle On"}</span>
+              <Switch />
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence initial={false}>
@@ -60,12 +83,13 @@ export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessag
       <form onSubmit={handleSendMessage} className="p-4 border-t border-border">
         <div className="flex gap-2">
           <Input
-            placeholder="Type a message..."
+            placeholder={chatPaused ? "Chat is paused by admin" : "Type a message..."}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             className="flex-1"
+            disabled={chatPaused}
           />
-          <Button className="bg-purple-500" type="submit" size="icon">
+          <Button type="submit" size="icon" disabled={chatPaused}>
             <Send className="h-4 w-4" />
           </Button>
         </div>

@@ -9,7 +9,7 @@ export function Redirect() {
 
   useEffect(() => {
     if (sessionData?.user) {
-      router.push("/room");
+      router.push("/dashboard/room");
     }
   }, [sessionData, router]);
 

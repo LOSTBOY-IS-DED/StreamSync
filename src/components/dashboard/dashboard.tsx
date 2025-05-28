@@ -1,12 +1,10 @@
 "use client"
 
 import type React from "react"
-
 import { useEffect, useState } from "react"
 import { useTheme } from "next-themes"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, Menu, X, Users, Moon, Sun, LayoutGrid, LayoutList } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
@@ -15,67 +13,134 @@ import { VideoPlayer } from "@/components/dashboard/video-player"
 import { Queue } from "@/components/dashboard/queue"
 import { Chat } from "@/components/dashboard/chat"
 import { AlternativeDesign } from "@/components/dashboard/alternative-design"
-import { initialQueueItems, initialChatMessages, currentVideo, roomInfo } from "@/components/dashboard/data"
 import { ProfileHover } from "../ui/profile-card"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
+import { useWebSocket } from "@/context/WebContext"
+import axios from "axios"
 
-export function Dashboard() {
+interface RoomData {
+  room: {
+    id: string
+    code: string
+    name: string
+    adminId: string
+    allowSongAdd: boolean
+  }
+  isAdmin: boolean
+  userId: string
+}
+
+interface DashboardProps {
+  roomData: RoomData
+}
+
+export function Dashboard({ roomData }: DashboardProps) {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const { toast } = useToast()
+  const { theme, setTheme } = useTheme()
 
-  // ✅ All hooks at the top
+  // WebSocket context - now this will work since we're wrapped in WebSocketProvider
+  const {
+    messages,
+    sendMessage,
+    queue,
+    addSong,
+    upvoteSong,
+    userUpvotes,
+    userId,
+    isAdmin,
+    nowPlaying,
+    nextSong,
+    prevSong,
+    messageControl,
+    chatPaused,
+    allowSongAdd,
+    songAddStatus,
+    userDets,
+    userCount,
+  } = useWebSocket()
+
+  // State management
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [youtubeUrl, setYoutubeUrl] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
-  const [queueItems, setQueueItems] = useState(initialQueueItems)
-  const [chatMessages, setChatMessages] = useState(initialChatMessages)
   const [newMessage, setNewMessage] = useState("")
-  const { theme, setTheme } = useTheme()
-  const { toast } = useToast()
   const [designMode, setDesignMode] = useState<"modern" | "alternative">("modern")
+  const [searchResults, setSearchResults] = useState<any[]>([])
+
+  // Room info from props and WebSocket
+  const roomInfo = {
+    id: roomData.room.code,
+    name: roomData.room.name,
+    host: "StreamSync",
+    activeUsers: userCount || 1,
+    totalSongs: queue?.length || 0,
+    isAdmin: isAdmin,
+  }
+
+  // Transform WebSocket queue data to match component interface
+  const queueItems =
+    queue?.map((item: any) => ({
+      id: item.streamId || item.id,
+      title: item.title || "Unknown Title",
+      thumbnail: item.bigImg || item.smallImg || "/placeholder.svg",
+      votes: item.upvoteCount || 0,
+      duration: "3:30",
+      userVote: userUpvotes.has(item.streamId || item.id) ? "up" : null,
+      addedBy: item.addedBy?.name || "Unknown User",
+    })) || []
+
+  // Transform WebSocket messages to match component interface
+  const chatMessages =
+    messages?.map((msg: any) => ({
+      id: msg.id || `msg-${Date.now()}`,
+      user: msg.sender || "Unknown User",
+      message: msg.text || msg.message || "",
+      avatar: (msg.sender || "U").charAt(0).toUpperCase(),
+      time: new Date(msg.createdAt || Date.now()).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    })) || []
+
+  // Current video from WebSocket nowPlaying
+  const currentVideo = nowPlaying
+    ? {
+        id: nowPlaying.extractedId || "",
+        title: nowPlaying.title || "No video playing",
+        channel: "YouTube",
+        views: "N/A",
+        likes: "N/A",
+        publishedAt: "N/A",
+      }
+    : {
+        id: "",
+        title: "No video playing",
+        channel: "",
+        views: "",
+        likes: "",
+        publishedAt: "",
+      }
 
   useEffect(() => {
     if (status === "loading") return
     if (!session?.user) {
-      router.push("/") // Redirect unauthenticated users to home
+      router.push("/")
     }
   }, [session, status, router])
 
-  // ✅ Return after all hooks
   if (status === "loading" || !session?.user) return null
 
   const handleVote = (id: string, voteType: "up" | "down" | null) => {
-    setQueueItems(
-      queueItems.map((item) => {
-        if (item.id === id) {
-          if (item.userVote === voteType) {
-            return {
-              ...item,
-              votes: voteType === "up" ? item.votes - 1 : item.votes + 1,
-              userVote: null as "up" | "down" | null,
-            }
-          } else if (item.userVote !== null) {
-            return {
-              ...item,
-              votes: voteType === "up" ? item.votes + 2 : item.votes - 2,
-              userVote: voteType,
-            }
-          } else {
-            return {
-              ...item,
-              votes: voteType === "up" ? item.votes + 1 : item.votes - 1,
-              userVote: voteType,
-            }
-          }
-        }
-        return item
-      }),
-    )
+    if (voteType === "up") {
+      upvoteSong(id, userId)
+    }
   }
 
-  const handleAddYoutubeUrl = () => {
+  const handleAddYoutubeUrl = async () => {
     if (!youtubeUrl) return
     if (!youtubeUrl.includes("youtube.com") && !youtubeUrl.includes("youtu.be")) {
       toast({
@@ -86,50 +151,70 @@ export function Dashboard() {
       return
     }
 
-    const newItem = {
-      id: `new-${Date.now()}`,
-      title: "New Added Video",
-      thumbnail: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-      votes: 1,
-      duration: "3:30",
-      userVote: "up" as "up" | "down" | null,
-      addedBy: "You",
+    try {
+      // Use your existing streams endpoint
+      const response = await axios.post("/api/streams", {
+        url: youtubeUrl,
+      })
+
+      if (response.status === 200) {
+        const songData = {
+          extractedId: response.data.id,
+          title: response.data.title,
+          bigImg: response.data.bigImg,
+          url: youtubeUrl,
+          roomId: roomData.room.id,
+          addedById: userId,
+        }
+
+        addSong(songData)
+        setYoutubeUrl("")
+
+        toast({
+          title: "Video added to queue",
+          description: "Your video has been added to the queue",
+        })
+      }
+    } catch (error) {
+      console.error("Error adding video:", error)
+      toast({
+        title: "Error adding video",
+        description: "Failed to add video to queue",
+        variant: "destructive",
+      })
     }
-
-    setQueueItems([...queueItems, newItem])
-    setYoutubeUrl("")
-
-    toast({
-      title: "Video added to queue",
-      description: "Your video has been added to the queue",
-    })
   }
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchQuery) return
 
-    toast({
-      title: "Searching for videos",
-      description: `Searching for "${searchQuery}"`,
-    })
+    try {
+      // Use your existing youtube-search endpoint
+      const response = await axios.get(`/api/youtube-search?q=${encodeURIComponent(searchQuery)}`)
 
-    setSearchQuery("")
+      if (response.status === 200) {
+        setSearchResults(response.data.items)
+        toast({
+          title: "Search completed",
+          description: `Found ${response.data.items.length} videos`,
+        })
+      }
+    } catch (error) {
+      console.error("Search error:", error)
+      toast({
+        title: "Search failed",
+        description: "Failed to search for videos",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!newMessage) return
+    if (!newMessage || chatPaused) return
 
-    const newChatMessage = {
-      id: `new-${Date.now()}`,
-      user: "You",
-      message: newMessage,
-      avatar: "Y",
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    }
-
-    setChatMessages([...chatMessages, newChatMessage])
+    sendMessage(newMessage, userDets?.user?.email || session?.user?.name)
     setNewMessage("")
   }
 
@@ -177,6 +262,7 @@ export function Dashboard() {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 handleSearch={handleSearch}
+                searchResults={searchResults}
                 isMobile={true}
                 closeMobileMenu={() => setMobileMenuOpen(false)}
                 copyRoomId={copyRoomId}
@@ -206,6 +292,7 @@ export function Dashboard() {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 handleSearch={handleSearch}
+                searchResults={searchResults}
                 copyRoomId={copyRoomId}
               />
             </motion.aside>
@@ -230,6 +317,11 @@ export function Dashboard() {
                 <Users className="h-3 w-3 mr-1" />
                 {roomInfo.activeUsers} active
               </Badge>
+              {roomInfo.isAdmin && (
+                <Badge variant="secondary" className="ml-2">
+                  Admin
+                </Badge>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -264,6 +356,7 @@ export function Dashboard() {
                 newMessage={newMessage}
                 setNewMessage={setNewMessage}
                 handleSendMessage={handleSendMessage}
+                isAdmin={roomInfo.isAdmin}
               />
             </div>
           ) : (

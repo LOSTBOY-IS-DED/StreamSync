@@ -133,7 +133,7 @@ export function RoomPage() {
       } else {
         if (roomId.trim()) {
           toast.success("Joining room...")
-          window.location.href = `/dashboard?room=${roomId}`
+          window.location.href = `/dashboard/${roomId}`
         } else {
           toast.error("Please enter a room ID")
           setIsLoading(false)
@@ -659,3 +659,5 @@ export function RoomPage() {
     </div>
   )
 }
+
+
