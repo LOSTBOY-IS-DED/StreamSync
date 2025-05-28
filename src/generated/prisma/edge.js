@@ -200,7 +200,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/subhajitchaudhury/Desktop/code-playground/projects/streamsync/src/generated/prisma",
+      "value": "/home/kishu/workspace/DEV/StreamSync/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -209,7 +209,7 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "darwin-arm64",
+        "value": "debian-openssl-3.0.x",
         "native": true
       },
       {
@@ -218,12 +218,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "/Users/subhajitchaudhury/Desktop/code-playground/projects/streamsync/prisma/schema.prisma",
+    "sourceFilePath": "/home/kishu/workspace/DEV/StreamSync/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null,
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": null
   },
   "relativePath": "../../../prisma",
   "clientVersion": "6.8.2",

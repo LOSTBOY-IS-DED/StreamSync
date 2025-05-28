@@ -1,0 +1,16 @@
+services:
+  frontend:
+    build:
+      context: .
+    container_name: stream-sync-frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./:/app
+      - /app/node_modules 
+    networks:
+      - streamsync_backend
+
+networks:
+  streamsync_backend:
+    driver: bridge
