@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-"use client"; 
+"use client"
 
 import type React from "react"
 
@@ -32,17 +32,15 @@ import { cn } from "@/lib/utils"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-
 export function RoomPage() {
-    const { data: session, status } = useSession()
-    const router = useRouter()
+  const { data: session, status } = useSession()
+  const router = useRouter()
 
-    useEffect(() => {
+  useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/")
     }
-    }, [status, router])
-
+  }, [status, router])
 
   const [mode, setMode] = useState<"join" | "create">("join")
   const [roomId, setRoomId] = useState("")
@@ -52,21 +50,32 @@ export function RoomPage() {
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 })
 
   const generateRoomId = () => {
-    const characters = "abcdefghijklmnopqrstuvwxyz";
-    let roomId = "";
+    const characters = "abcdefghijklmnopqrstuvwxyz"
+    let roomId = ""
     for (let i = 0; i < 9; i++) {
       if (i > 0 && i % 3 === 0) {
-        roomId += "-";
+        roomId += "-"
       }
-      roomId += characters[Math.floor(Math.random() * characters.length)];
+      roomId += characters[Math.floor(Math.random() * characters.length)]
     }
-    return roomId;
-  };
+    return roomId
+  }
 
-  const formatRoomId = (input: string) => {
-    const cleanInput = input.replace(/-/g, "").slice(0, 9);
-    return cleanInput.match(/.{1,3}/g)?.join("-") || "";
-  };
+  const formatRoomId = (value: string) => {
+    // Remove any non-alphabetic characters and convert to lowercase
+    const cleaned = value.toLowerCase().replace(/[^a-z]/g, "")
+
+    // Add hyphens every 3 characters
+    let formatted = ""
+    for (let i = 0; i < cleaned.length && i < 9; i++) {
+      if (i > 0 && i % 3 === 0) {
+        formatted += "-"
+      }
+      formatted += cleaned[i]
+    }
+
+    return formatted
+  }
 
   useEffect(() => {
     const handleResize = () => {
@@ -97,52 +106,80 @@ export function RoomPage() {
   }
 
   const handleQuickGenerate = () => {
-    const newRoomId = generateRoomId();
-    setRoomId(newRoomId);
-    toast.success("Room ID generated!");
+    const newRoomId = generateRoomId()
+    setRoomId(newRoomId)
+    toast.success("Room ID generated!")
   }
 
   const handleGenerateCreateRoomId = () => {
-    const newRoomId = generateRoomId();
-    setCreateRoomId(newRoomId);
-    toast.success("Room ID generated!");
+    const newRoomId = generateRoomId()
+    setCreateRoomId(newRoomId)
+    toast.success("Room ID generated!")
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+  const handleCreateRoom = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault()
+    }
 
+    if (!createRoomId.trim()) {
+      toast.error("Please generate a room ID")
+      return
+    }
+
+    setIsLoading(true)
     try {
-      if (mode === "create") {
-        if (createRoomId.trim()) {
-          const res = await axios.post("/api/room/create", {
-            roomId: createRoomId,
-          });
-          if (!res) {
-            console.log("Error while creating room");
-            toast.error("Failed to create room");
-            setIsLoading(false);
-            return;
-          }
-          toast.success("Room created successfully!")
-          window.location.href = `/dashboard?room=${createRoomId}`
-        } else {
-          toast.error("Please generate a room ID")
-          setIsLoading(false)
-        }
-      } else {
-        if (roomId.trim()) {
-          toast.success("Joining room...")
-          window.location.href = `/dashboard/${roomId}`
-        } else {
-          toast.error("Please enter a room ID")
-          setIsLoading(false)
-        }
+      console.log("Creating room with ID:", createRoomId)
+
+      const res = await axios.post("/api/room/create", {
+        roomId: createRoomId,
+      })
+
+      console.log("API Response:", res.data)
+
+      if (!res || res.status !== 201) {
+        toast.error("Failed to create room")
+        return
       }
+
+      const { roomId: returnedRoomId } = res.data
+      console.log("Redirecting to room:", returnedRoomId)
+
+      toast.success("Room created successfully!")
+
+      // Redirect to the created room
+      router.push(`/dashboard/room/${returnedRoomId}`)
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Something went wrong");
-      setIsLoading(false);
+      console.error("Error creating room:", error)
+      if (axios.isAxiosError(error)) {
+        console.error("API Error:", error.response?.data)
+      }
+      toast.error("Something went wrong")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleJoinRoom = async (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault()
+    }
+
+    if (!roomId.trim()) {
+      toast.error("Please enter a room ID")
+      return
+    }
+
+    setIsLoading(true)
+    try {
+      console.log("Joining room:", roomId)
+      toast.success("Joining room...")
+      router.push(`/dashboard/room/${roomId}`)
+    } catch (error) {
+      console.error("Error joining room:", error)
+      toast.error("Something went wrong")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -366,7 +403,7 @@ export function RoomPage() {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="absolute top-4 sm:top-8 right-4 sm:right-8 z-20"
         >
-          <ProfileHover/>
+          <ProfileHover />
         </motion.div>
 
         <div className="flex items-center justify-center min-h-screen">
@@ -486,7 +523,13 @@ export function RoomPage() {
                           </p>
                         </div>
 
-                        <form onSubmit={handleSubmit} className="space-y-4">
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault()
+                            handleJoinRoom()
+                          }}
+                          className="space-y-4"
+                        >
                           <div>
                             <Input
                               placeholder="Enter or generate room ID (e.g., abc-def-ghi)"
@@ -538,7 +581,10 @@ export function RoomPage() {
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-white/70 text-sm sm:text-base">Your Room ID:</span>
                             {createRoomId && (
-                              <Badge variant="secondary" className="bg-purple-600/20 text-purple-300 text-xs sm:text-sm">
+                              <Badge
+                                variant="secondary"
+                                className="bg-purple-600/20 text-purple-300 text-xs sm:text-sm"
+                              >
                                 <Sparkles className="w-3 h-3 mr-1" />
                                 Generated
                               </Badge>
@@ -548,9 +594,7 @@ export function RoomPage() {
                           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                             <div className="flex-1 bg-gray-800/50 rounded-lg p-3 font-mono text-white text-sm sm:text-base break-all min-h-[48px] flex items-center">
                               {createRoomId || (
-                                <span className="text-white/50 text-sm">
-                                  Click the + button to generate a room ID
-                                </span>
+                                <span className="text-white/50 text-sm">Click the + button to generate a room ID</span>
                               )}
                             </div>
                             <div className="flex gap-2">
@@ -579,7 +623,12 @@ export function RoomPage() {
                           </div>
                         </div>
 
-                        <form onSubmit={handleSubmit}>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault()
+                            handleCreateRoom()
+                          }}
+                        >
                           <Button
                             type="submit"
                             disabled={isLoading || !createRoomId}
@@ -659,5 +708,3 @@ export function RoomPage() {
     </div>
   )
 }
-
-
