@@ -25,7 +25,15 @@ interface SidebarContentProps {
   isMobile?: boolean;
   closeMobileMenu?: () => void;
   copyRoomId: () => void;
+  searchResults: {
+    id: string;
+    title: string;
+    thumbnailUrl: string;
+    channelTitle?: string;
+    [key: string]: unknown;
+  }[];
 }
+
 
 export function SidebarContent({
   roomInfo,

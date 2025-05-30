@@ -84,13 +84,13 @@ export function Dashboard({ roomData }: DashboardProps) {
   // Transform WebSocket queue data to match component interface
   const queueItems =
     queue?.map((item: any) => ({
-      id: item.streamId || item.id,
-      title: item.title || "Unknown Title",
-      thumbnail: item.bigImg || item.smallImg || "/placeholder.svg",
-      votes: item.upvoteCount || 0,
+      id: String(item.streamId || item.id),
+      title: String(item.title || "Unknown Title"),
+      thumbnail: String(item.bigImg || item.smallImg || "/placeholder.svg"),
+      votes: Number(item.upvoteCount || 0),
       duration: "3:30",
-      userVote: userUpvotes.has(item.streamId || item.id) ? "up" : null,
-      addedBy: item.addedBy?.name || "Unknown User",
+      userVote: userUpvotes.has(item.streamId || item.id) ? "up" as "up" : null,
+      addedBy: String(item.addedBy?.name || "Unknown User"),
     })) || []
 
   // Transform WebSocket messages to match component interface
@@ -375,7 +375,7 @@ export function Dashboard({ roomData }: DashboardProps) {
               handleSearch={handleSearch}
               queueItems={sortedQueueItems}
               handleVote={handleVote}
-              chatMessages={chatMessages}
+              chatMessages={chatMessages} 
               newMessage={newMessage}
               setNewMessage={setNewMessage}
               handleSendMessage={handleSendMessage}
