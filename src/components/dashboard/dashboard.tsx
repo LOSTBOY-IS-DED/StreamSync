@@ -109,21 +109,21 @@ export function Dashboard({ roomData }: DashboardProps) {
   // Current video from WebSocket nowPlaying
   const currentVideo = nowPlaying
     ? {
-        id: nowPlaying.extractedId || "",
-        title: nowPlaying.title || "No video playing",
-        channel: "YouTube",
-        views: "N/A",
-        likes: "N/A",
-        publishedAt: "N/A",
-      }
+      id: nowPlaying.extractedId || "",
+      title: nowPlaying.title || "No video playing",
+      channel: "YouTube",
+      views: "N/A",
+      likes: "N/A",
+      publishedAt: "N/A",
+    }
     : {
-        id: "",
-        title: "No video playing",
-        channel: "",
-        views: "",
-        likes: "",
-        publishedAt: "",
-      }
+      id: "",
+      title: "No video playing",
+      channel: "",
+      views: "",
+      likes: "",
+      publishedAt: "",
+    }
 
   useEffect(() => {
     if (status === "loading") return
@@ -214,7 +214,11 @@ export function Dashboard({ roomData }: DashboardProps) {
     e.preventDefault()
     if (!newMessage || chatPaused) return
 
-    sendMessage(newMessage, userDets?.user?.email || session?.user?.name)
+    sendMessage(
+      newMessage,
+      userDets?.user?.email ?? session?.user?.name ?? "Unknown User"
+    )
+
     setNewMessage("")
   }
 
