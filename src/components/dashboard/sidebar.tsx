@@ -27,6 +27,7 @@ interface SidebarProps {
   handleSearch: (e: React.FormEvent) => void
   isMobile?: boolean
   closeMobileMenu?: () => void
+  copyRoomId : () => void
 }
 
 interface YouTubeSearchResult {
