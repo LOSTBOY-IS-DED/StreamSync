@@ -1,14 +1,17 @@
 "use client"
 
 import type React from "react"
-
+import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Plus, Search, Music, Clipboard, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import TrendingVideos from "./trending-videos"
+import { toast } from "sonner"
+import axios from "axios"
+import LiteYouTubeEmbed from "react-lite-youtube-embed"
 import HistoryVideos from "./history-videos"
+import Image from "next/image"
 
 interface SidebarProps {
   roomInfo: {
@@ -29,6 +32,26 @@ interface SidebarProps {
   copyRoomId: () => void
 }
 
+interface YouTubeSearchResult {
+  id: {
+    videoId: string
+  }
+  snippet: {
+    title: string
+    thumbnails: {
+      default: {
+        url: string
+      }
+    }
+  }
+}
+
+const extractVideoId = (url: string): string | null => {
+  const regex = /(?:youtube\.com\/(?:[^/]+\/.*|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/
+  const match = url.match(regex)
+  return match ? match[1] : null
+}
+
 export default function Sidebar({
   roomInfo,
   youtubeUrl,
@@ -41,6 +64,85 @@ export default function Sidebar({
   closeMobileMenu = () => {},
   copyRoomId,
 }: SidebarProps) {
+  const [searchResults, setSearchResults] = useState<YouTubeSearchResult[]>([])
+  const [isSearching, setIsSearching] = useState(false)
+  const [showSearchResults, setShowSearchResults] = useState(false)
+  const [error, setError] = useState("")
+  const searchResultsRef = useRef<HTMLDivElement>(null)
+
+  const videoId = extractVideoId(youtubeUrl)
+
+  const handleYouTubeSearch = async () => {
+    if (!searchQuery.trim()) return
+
+    setIsSearching(true)
+    setShowSearchResults(true)
+
+    try {
+      const response = await axios.get(`/api/youtube-search?q=${encodeURIComponent(searchQuery)}`)
+
+      if (!response) {
+        console.error("error while fetching song from youtube")
+        toast("error while fetching song from youtube")
+        return
+      }
+
+      setSearchResults(response.data.items)
+    } catch (err) {
+      console.error("Search error:", err)
+      toast("Failed to search. Please try again.")
+      setSearchResults([])
+    } finally {
+      setIsSearching(false)
+    }
+  }
+
+  const handleSelectVideo = (video: YouTubeSearchResult) => {
+    const youtubeUrl = `https://www.youtube.com/watch?v=${video.id.videoId}`
+    setYoutubeUrl(youtubeUrl)
+    setShowSearchResults(false)
+    setSearchQuery("")
+  }
+
+  const handleAddToQueue = () => {
+    if (!youtubeUrl.trim()) {
+      setError("Please enter a YouTube link.")
+      toast("Please enter a YouTube link.")
+      return
+    }
+    if (!videoId) {
+      toast("Invalid Youtube URL")
+      setError("Invalid YouTube URL.")
+      return
+    }
+    setError("")
+    handleAddYoutubeUrl()
+  }
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    handleYouTubeSearch()
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleYouTubeSearch()
+    }
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchResultsRef.current && !searchResultsRef.current.contains(event.target as Node)) {
+        setShowSearchResults(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
+
   return (
     <div className="p-4 space-y-6">
       {/* Logo and room info */}
@@ -86,41 +188,80 @@ export default function Sidebar({
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value)}
           />
-          <Button onClick={handleAddYoutubeUrl}>
+          <Button onClick={handleAddToQueue}>
             <Plus className="h-4 w-4 mr-1" />
             Add
           </Button>
         </div>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {videoId && (
+          <div className="bg-gray-900 border-gray-800 rounded-b-xl overflow-hidden mt-2">
+            <div className="w-full h-fit">
+              <LiteYouTubeEmbed title="" id={videoId} />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Search */}
-      <div className="space-y-2">
+      <div className="space-y-2 relative">
         <h2 className="text-sm font-medium">Search YouTube</h2>
-        <form onSubmit={handleSearch} className="flex gap-2">
+        <form onSubmit={handleSearchSubmit} className="flex gap-2">
           <Input
             placeholder="Search for videos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleKeyPress}
           />
-          <Button type="submit">
-            <Search className="h-4 w-4" />
+          <Button type="submit" disabled={isSearching}>
+            {isSearching ? (
+              <>
+                <Search className="h-4 w-4" />
+                ...
+              </>
+            ) : (
+              <Search className="h-4 w-4" />
+            )}
           </Button>
         </form>
+
+        {/* Search Results Dropdown */}
+        {showSearchResults && searchResults.length > 0 && (
+          <div
+            ref={searchResultsRef}
+            className="absolute z-[999] mt-1 w-full bg-card border border-border rounded-md shadow-lg max-h-60 overflow-auto"
+          >
+            {searchResults.map((result) => (
+              <div
+                key={result.id.videoId}
+                className="flex items-center p-2 hover:bg-accent cursor-pointer border-b border-border last:border-b-0"
+                onClick={() => handleSelectVideo(result)}
+              >
+                <div className="flex-shrink-0 w-16 h-12 rounded-xl mr-2 overflow-hidden">
+                  <Image
+                    width={64}
+                    height={48}
+                    src={result.snippet.thumbnails.default.url || "/placeholder.svg"}
+                    alt={result.snippet.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="flex-1 truncate text-xs">{result.snippet.title}</div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Tabs for different content */}
-      <Tabs defaultValue="trending">
-        <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="trending">Trending</TabsTrigger>
+      {/* <Tabs defaultValue="history">
+        <TabsList className="grid grid-cols-1">
           <TabsTrigger value="history">History</TabsTrigger>
         </TabsList>
-        <TabsContent value="trending" className="space-y-2 mt-2">
-          <TrendingVideos />
-        </TabsContent>
         <TabsContent value="history" className="space-y-2 mt-2">
           <HistoryVideos />
         </TabsContent>
-      </Tabs>
+      </Tabs> */}
 
       {/* Mobile close button */}
       {isMobile && (

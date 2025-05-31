@@ -1,47 +1,61 @@
-import Image from "next/image";
+import React from 'react';
+import Image from 'next/image';
 
-export default function HistoryVideos() {
+const HistoryVideos = () => {
   return (
-    <>
-      <div className="bg-card rounded-lg p-3 flex gap-3 hover:bg-accent/50 transition-colors cursor-pointer">
-        <div className="flex-shrink-0 w-16 h-12 rounded overflow-hidden">
+    <div className="space-y-4">
+      {/* Video 1 */}
+      <div className="flex items-center space-x-4">
+        <div className="relative w-24 h-18">
           <Image
-            src="https://i.ytimg.com/vi/JGwWNGJdvx8/hqdefault.jpg"
+            src="https://via.placeholder.com/128x96"
             alt="Video thumbnail"
+            width={64}
+            height={48}
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium line-clamp-2">Ed Sheeran - Shape of You</h3>
-          <p className="text-xs text-muted-foreground mt-1">Played 2 days ago</p>
+        <div>
+          <h3 className="text-sm font-medium">Video Title 1</h3>
+          <p className="text-xs text-gray-500">Channel Name • 1 day ago</p>
         </div>
       </div>
-      <div className="bg-card rounded-lg p-3 flex gap-3 hover:bg-accent/50 transition-colors cursor-pointer">
-        <div className="flex-shrink-0 w-16 h-12 rounded overflow-hidden">
+
+      {/* Video 2 */}
+      <div className="flex items-center space-x-4">
+        <div className="relative w-24 h-18">
           <Image
-            src="https://i.ytimg.com/vi/RgKAFK5djSk/hqdefault.jpg"
+            src="https://via.placeholder.com/128x96"
             alt="Video thumbnail"
+            width={64}
+            height={48}
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium line-clamp-2">Wiz Khalifa - See You Again ft. Charlie Puth</h3>
-          <p className="text-xs text-muted-foreground mt-1">Played 3 days ago</p>
+        <div>
+          <h3 className="text-sm font-medium">Video Title 2</h3>
+          <p className="text-xs text-gray-500">Channel Name • 3 days ago</p>
         </div>
       </div>
-      <div className="bg-card rounded-lg p-3 flex gap-3 hover:bg-accent/50 transition-colors cursor-pointer">
-        <div className="flex-shrink-0 w-16 h-12 rounded overflow-hidden">
+
+      {/* Video 3 */}
+      <div className="flex items-center space-x-4">
+        <div className="relative w-24 h-18">
           <Image
-            src="https://i.ytimg.com/vi/fHI8X4OXluQ/hqdefault.jpg"
+            src="https://via.placeholder.com/128x96"
             alt="Video thumbnail"
+            width={64}
+            height={48}
             className="w-full h-full object-cover"
           />
         </div>
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-medium line-clamp-2">The Weeknd - Blinding Lights</h3>
-          <p className="text-xs text-muted-foreground mt-1">Played 5 days ago</p>
+        <div>
+          <h3 className="text-sm font-medium">Video Title 3</h3>
+          <p className="text-xs text-gray-500">Channel Name • 1 week ago</p>
         </div>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
+
+export default HistoryVideos;

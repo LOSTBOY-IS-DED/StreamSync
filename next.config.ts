@@ -6,7 +6,11 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
-    domains: ['lh3.googleusercontent.com', 'i.ytimg.com'],
+    domains: [
+      "lh3.googleusercontent.com",
+      "i.ytimg.com",
+      "via.placeholder.com",
+    ],
   },
 };
 

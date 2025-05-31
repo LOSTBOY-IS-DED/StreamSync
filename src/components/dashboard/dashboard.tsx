@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, Menu, X, Users, Moon, Sun, LayoutGrid, Layou
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
-import { SidebarContent } from "@/components/dashboard/sidebar-content"
+// import { SidebarContent } from "@/components/dashboard/sidebar-content"
 import { VideoPlayer } from "@/components/dashboard/video-player"
 import { Queue } from "@/components/dashboard/queue"
 import { Chat } from "@/components/dashboard/chat"
@@ -18,6 +18,7 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useWebSocket } from "@/context/WebContext"
 import axios from "axios"
+import Sidebar from "./sidebar"
 
 interface RoomData {
   room: {
@@ -258,7 +259,7 @@ export function Dashboard({ roomData }: DashboardProps) {
           >
             <div className="fixed inset-0 bg-black/50" onClick={() => setMobileMenuOpen(false)} />
             <div className="fixed inset-y-0 left-0 w-80 bg-background border-r border-border overflow-y-auto">
-              <SidebarContent
+              <Sidebar
                 roomInfo={roomInfo}
                 youtubeUrl={youtubeUrl}
                 setYoutubeUrl={setYoutubeUrl}
@@ -288,7 +289,7 @@ export function Dashboard({ roomData }: DashboardProps) {
               transition={{ duration: 0.3 }}
               className="hidden lg:block border-r border-border h-screen overflow-y-auto"
             >
-              <SidebarContent
+              <Sidebar
                 roomInfo={roomInfo}
                 youtubeUrl={youtubeUrl}
                 setYoutubeUrl={setYoutubeUrl}
