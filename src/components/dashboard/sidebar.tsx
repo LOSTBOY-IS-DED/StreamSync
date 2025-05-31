@@ -6,11 +6,9 @@ import { motion } from "framer-motion"
 import { Plus, Search, Music, Clipboard, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
 import axios from "axios"
 import LiteYouTubeEmbed from "react-lite-youtube-embed"
-import HistoryVideos from "./history-videos"
 import Image from "next/image"
 
 interface SidebarProps {
@@ -69,6 +67,7 @@ export default function Sidebar({
   const [showSearchResults, setShowSearchResults] = useState(false)
   const [error, setError] = useState("")
   const searchResultsRef = useRef<HTMLDivElement>(null)
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null)
 
   const videoId = extractVideoId(youtubeUrl)
 
@@ -143,6 +142,21 @@ export default function Sidebar({
     }
   }, [])
 
+  // 🔁 Debounced search effect
+  useEffect(() => {
+    if (!searchQuery.trim()) return
+
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+
+    debounceTimer.current = setTimeout(() => {
+      handleYouTubeSearch()
+    }, 100)
+
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    }
+  }, [searchQuery])
+
   return (
     <div className="p-4 space-y-6">
       {/* Logo and room info */}
@@ -188,7 +202,7 @@ export default function Sidebar({
             value={youtubeUrl}
             onChange={(e) => setYoutubeUrl(e.target.value)}
           />
-          <Button onClick={handleAddToQueue}>
+          <Button className="bg-purple-500" onClick={handleAddToQueue}>
             <Plus className="h-4 w-4 mr-1" />
             Add
           </Button>
@@ -213,7 +227,7 @@ export default function Sidebar({
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={handleKeyPress}
           />
-          <Button type="submit" disabled={isSearching}>
+          <Button className="bg-purple-500" type="submit" disabled={isSearching}>
             {isSearching ? (
               <>
                 <Search className="h-4 w-4" />
@@ -252,16 +266,6 @@ export default function Sidebar({
           </div>
         )}
       </div>
-
-      {/* Tabs for different content */}
-      {/* <Tabs defaultValue="history">
-        <TabsList className="grid grid-cols-1">
-          <TabsTrigger value="history">History</TabsTrigger>
-        </TabsList>
-        <TabsContent value="history" className="space-y-2 mt-2">
-          <HistoryVideos />
-        </TabsContent>
-      </Tabs> */}
 
       {/* Mobile close button */}
       {isMobile && (

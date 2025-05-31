@@ -267,7 +267,6 @@ export function Dashboard({ roomData }: DashboardProps) {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 handleSearch={handleSearch}
-                searchResults={searchResults}
                 isMobile={true}
                 closeMobileMenu={() => setMobileMenuOpen(false)}
                 copyRoomId={copyRoomId}
@@ -297,7 +296,6 @@ export function Dashboard({ roomData }: DashboardProps) {
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
                 handleSearch={handleSearch}
-                searchResults={searchResults}
                 copyRoomId={copyRoomId}
               />
             </motion.aside>
