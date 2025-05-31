@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useWebSocket } from "@/context/WebContext"
 import Switch from "../Button1"
+import Image from "next/image"
 
 interface ChatProps {
   chatMessages: {
     id: string
     user: string
     message: string
-    avatar: string
+    avatar: string // can be image URL or initial
     time: string
   }[]
   newMessage: string
@@ -24,7 +25,6 @@ interface ChatProps {
 }
 
 export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessage, isAdmin = false }: ChatProps) {
-  // Get WebSocket data with fallback for when provider is not available
   const webSocketData = useWebSocket()
   let chatPaused = false
   let messageControl = () => {
@@ -49,29 +49,37 @@ export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessag
           )}
         </div>
       </div>
+
+      {/* Chat messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence initial={false}>
           {chatMessages.map((message, index) => (
             <motion.div
-              key={message.id}
+              key={message.id ?? `message-${index}`}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: index * 0.05 }}
               className="flex gap-3"
             >
               <Avatar className="h-8 w-8">
-                <AvatarFallback>{message.avatar}</AvatarFallback>
+                {message.avatar?.startsWith("http") ? (
+                  <Image src={message.avatar} alt={message.user} className="h-full w-full object-cover rounded-full" />
+                ) : (
+                  <AvatarFallback>{message.avatar || "U"}</AvatarFallback>
+                )}
               </Avatar>
               <div className="flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm">{message.user}</span>
-                  <span className="text-xs text-muted-foreground">{message.time}</span>
+                  <span className="font-medium text-sm">{message.user || "Unknown"}</span>
+                  <span className="text-xs text-muted-foreground">{message.time || ""}</span>
                 </div>
                 <p className="text-sm mt-1">{message.message}</p>
               </div>
             </motion.div>
           ))}
         </AnimatePresence>
+
+        {/* No messages fallback */}
         {chatMessages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full py-8 text-muted-foreground">
             <MessageSquare className="h-12 w-12 mb-4 opacity-20" />
@@ -80,6 +88,8 @@ export function Chat({ chatMessages, newMessage, setNewMessage, handleSendMessag
           </div>
         )}
       </div>
+
+      {/* Message input */}
       <form onSubmit={handleSendMessage} className="p-4 border-t border-border">
         <div className="flex gap-2">
           <Input

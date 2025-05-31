@@ -27,7 +27,6 @@ interface SidebarProps {
   handleSearch: (e: React.FormEvent) => void
   isMobile?: boolean
   closeMobileMenu?: () => void
-  copyRoomId: () => void
 }
 
 interface YouTubeSearchResult {
@@ -60,7 +59,6 @@ export default function Sidebar({
   handleSearch,
   isMobile = false,
   closeMobileMenu = () => {},
-  copyRoomId,
 }: SidebarProps) {
   const [searchResults, setSearchResults] = useState<YouTubeSearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
@@ -70,6 +68,17 @@ export default function Sidebar({
   const debounceTimer = useRef<NodeJS.Timeout | null>(null)
 
   const videoId = extractVideoId(youtubeUrl)
+
+  // Copy Room ID function
+  const copyRoomId = () => {
+    if (!roomInfo.id) return
+
+    navigator.clipboard.writeText(roomInfo.id).then(() => {
+      toast.success("Room ID copied to clipboard!")
+    }).catch(() => {
+      toast.error("Failed to copy Room ID.")
+    })
+  }
 
   const handleYouTubeSearch = async () => {
     if (!searchQuery.trim()) return
